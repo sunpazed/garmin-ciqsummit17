@@ -5,6 +5,8 @@
 
     <drawables>
       <bitmap id="LauncherIcon" filename="bitmaps/launcher_icon.png" />
+      <bitmap id="gciqlogo" filename="bitmaps/gciqds-logo-64.png" />
+      <bitmap id="gciqlogo_sml" filename="bitmaps/gciqds-logo-64-sml.png" />
     </drawables>
 
     <fonts>

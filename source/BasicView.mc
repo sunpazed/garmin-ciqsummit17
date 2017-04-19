@@ -61,6 +61,7 @@ class BasicView extends Ui.WatchFace {
     var sent_request = null;
     var f_opensans = null;
     var degreeStart = 0;
+    var gciqlogo = null;
 
 
     // animation settings
@@ -100,16 +101,22 @@ class BasicView extends Ui.WatchFace {
       // set offsets based on screen type
       // positioning for different screen layouts
       if (canvas_tall) {
+        gciqlogo = Ui.loadResource(Rez.Drawables.gciqlogo_sml);
       }
       if (canvas_rect) {
+        gciqlogo = Ui.loadResource(Rez.Drawables.gciqlogo_sml);
       }
       if (canvas_circ) {
         if (canvas_r240) {
+          gciqlogo = Ui.loadResource(Rez.Drawables.gciqlogo);
         } else {
+          gciqlogo = Ui.loadResource(Rez.Drawables.gciqlogo);
         }
       }
       if (canvas_semicirc) {
+        gciqlogo = Ui.loadResource(Rez.Drawables.gciqlogo);
       }
+
 
 
     }
@@ -256,6 +263,17 @@ class BasicView extends Ui.WatchFace {
 
       } else {
 
+        // do we have bluetooth? ok, then we're loading stuff
+        if (bluetooth) {
+        dc.setColor(Gfx.COLOR_DK_BLUE, Gfx.COLOR_TRANSPARENT);
+        dc.drawBitmap((dw-gciqlogo.getWidth())/2, (dh-gciqlogo.getHeight())/2, gciqlogo);
+
+          // dc.drawText(dw/2,(dh/2)-(dc.getFontHeight(Gfx.FONT_SYSTEM_SMALL)/2),Gfx.FONT_SYSTEM_SMALL,"#CIQSummit17",Gfx.TEXT_JUSTIFY_CENTER);          
+        } else {
+        dc.setColor(Gfx.COLOR_DK_RED, Gfx.COLOR_TRANSPARENT);
+          dc.drawText(dw/2,(dh/2)-(dc.getFontHeight(Gfx.FONT_SYSTEM_SMALL)/2),Gfx.FONT_SYSTEM_SMALL,"Disconnected",Gfx.TEXT_JUSTIFY_CENTER);
+        }
+
         // nope, we don't have tweets yet
         dc.setColor(Gfx.COLOR_BLUE, Gfx.COLOR_TRANSPARENT);
 
@@ -264,15 +282,6 @@ class BasicView extends Ui.WatchFace {
         degreeStart = degreeStart%360;
         dc.drawArc(dw/2, dh/2, dw*3/7, Gfx.ARC_COUNTER_CLOCKWISE, degreeStart, degreeStart+24);
         degreeStart = degreeStart - 6;
-
-        // do we have bluetooth? ok, then we're loading stuff
-        if (bluetooth) {
-        dc.setColor(Gfx.COLOR_DK_BLUE, Gfx.COLOR_TRANSPARENT);
-          dc.drawText(dw/2,(dh/2)-(dc.getFontHeight(Gfx.FONT_SYSTEM_SMALL)/2),Gfx.FONT_SYSTEM_SMALL,"#CIQSummit17",Gfx.TEXT_JUSTIFY_CENTER);          
-        } else {
-        dc.setColor(Gfx.COLOR_DK_RED, Gfx.COLOR_TRANSPARENT);
-          dc.drawText(dw/2,(dh/2)-(dc.getFontHeight(Gfx.FONT_SYSTEM_SMALL)/2),Gfx.FONT_SYSTEM_SMALL,"Disconnected",Gfx.TEXT_JUSTIFY_CENTER);
-        }
 
       }
 
