@@ -18,7 +18,7 @@ enum {
 class BasicView extends Ui.WatchFace {
 
     // globals
-    var debug = false;
+    var debug = true;
     var timer1;
     var delay = 0;
     var timer_timeout = 4000;
@@ -129,12 +129,12 @@ class BasicView extends Ui.WatchFace {
 
     }
 
-    // onReceiveTweetData 
+    // onReceiveTweetData
     // callback used to store data, and trigger a UI update via the got_tweets flag
     function onReceiveTweetData(responseCode, data) {
 
       if (debug) {
-        Sys.println(Lang.format("responseCode: $1$", [responseCode]));      
+        Sys.println(Lang.format("responseCode: $1$", [responseCode]));
       }
 
       if (responseCode == 200) {
@@ -144,7 +144,7 @@ class BasicView extends Ui.WatchFace {
         tweets = data;
 
         // set the got_tweets flag
-        got_tweets = true; 
+        got_tweets = true;
       }
 
     }
@@ -169,7 +169,6 @@ class BasicView extends Ui.WatchFace {
       var dw = dc.getWidth();
       var dh = dc.getHeight();
 
-
       if (got_tweets != null) {
 
           // parse tweet data
@@ -180,23 +179,29 @@ class BasicView extends Ui.WatchFace {
 
           // font for screen
           var font = Gfx.FONT_SYSTEM_TINY;
-          var font_height = dc.getFontHeight(font)*0.9;
+          var font_height = dc.getFontHeight(font);
 
 
           // draw username
           dc.setColor(Gfx.COLOR_DK_BLUE, Gfx.COLOR_TRANSPARENT);
-          dc.drawText(dw/2,20,font, username ,Gfx.TEXT_JUSTIFY_CENTER);      
+          dc.drawText(dw/2,20,font, username ,Gfx.TEXT_JUSTIFY_CENTER);
 
 
           // setup to render a multiline text field
           var length_of_tweet = tweet.length();
-          var current_string = ""; 
+          var current_string = "";
           var lastvalue = 0;
           var length = 0;
-          var padding = 20;
+
+          // padding for display text
+          var padding_top = 45;
+          var padding_bottom = 10;
+          var padding_sides = 5;
+
           var x_pos = 0;
-          var y_pos = 50;
-          var max_width = dw - padding;
+          //var y_pos = 50;
+          var y_pos = 0 + padding_top;
+          var max_width = dw - padding_sides;
           var y_cal = 0;
           var r = dw;
           var x1 = 0;
@@ -211,53 +216,57 @@ class BasicView extends Ui.WatchFace {
               // are we rendering text in a circle?
               if (canvas_circ) {
 
-                  y_cal = y_pos;// + (font_height/2);
+                  y_cal = y_pos + (font_height/2);
 
                 // if so, calculate max_width based on position across a circle
 
                  if (y_pos > (r/2)) {
                    x1 = r - (-y_cal+r);
                  } else {
-                   x1 = r - (y_cal);             
+                   x1 = r - (y_cal);
                  }
 
                  // remember pythagoras theorem?
-                 max_width = Math.sqrt((r*r) - (x1*x1));
+                 max_width = (Math.sqrt((r*r) - (x1*x1))) - padding_sides;
 
-              } 
+              }
 
               // let's grab the current section of text + next character, and it's calc it's length
               current_string = tweet.substring(lastvalue, l);
               length = dc.getTextWidthInPixels(current_string, font);
 
-              // have we reached a space, and near the end of the line? then truncate...
-              if ( (l>1) && (tweet.substring(l-1,l).equals(" ")) && (length > (max_width*5/6)) ) {
+              if ( (y_pos+font_height) < (dh - padding_bottom) ) {
 
-                 dc.drawText(dw/2,y_pos,font, current_string ,Gfx.TEXT_JUSTIFY_CENTER);      
-                 y_pos = y_pos + font_height;        
-                 lastvalue = l;            
+                  // have we reached a space, and near the end of the line? then truncate...
+                  if ( (l>1) && (tweet.substring(l-1,l).equals(" ")) && (length > (max_width*5/6)) ) {
 
-              // otherwise, have we exceeded the length?
-              } else if (length > max_width) {
+                     dc.drawText(dw/2,y_pos,font, current_string ,Gfx.TEXT_JUSTIFY_CENTER);
+                     y_pos = y_pos + font_height;
+                     lastvalue = l;
 
-                 dc.drawText(dw/2,y_pos,font, current_string ,Gfx.TEXT_JUSTIFY_CENTER);      
-                 y_pos = y_pos + font_height;        
-                 lastvalue = l;
+                  // otherwise, have we exceeded the length?
+                  } else if (length > max_width) {
 
-              // if not, are we at the last section?
-              } else if (l == length_of_tweet) {
+                     dc.drawText(dw/2,y_pos,font, current_string ,Gfx.TEXT_JUSTIFY_CENTER);
+                     y_pos = y_pos + font_height;
+                     lastvalue = l;
 
-                 dc.drawText(dw/2,y_pos,font, current_string ,Gfx.TEXT_JUSTIFY_CENTER);      
-                 y_pos = y_pos + font_height;        
-                 lastvalue = l;            
+                  // if not, are we at the last section?
+                  } else if (l == length_of_tweet) {
+
+                     dc.drawText(dw/2,y_pos,font, current_string ,Gfx.TEXT_JUSTIFY_CENTER);
+                     y_pos = y_pos + font_height;
+                     lastvalue = l;
+
+                  }
+
 
               }
-
 
          }
 
          if (debug) {
-            Sys.println(Lang.format("current_tweet: $1$", [current_tweet]));      
+            Sys.println(Lang.format("current_tweet: $1$", [current_tweet]));
          }
 
 
@@ -268,7 +277,7 @@ class BasicView extends Ui.WatchFace {
         dc.setColor(Gfx.COLOR_DK_BLUE, Gfx.COLOR_TRANSPARENT);
         dc.drawBitmap((dw-gciqlogo.getWidth())/2, (dh-gciqlogo.getHeight())/2, gciqlogo);
 
-          // dc.drawText(dw/2,(dh/2)-(dc.getFontHeight(Gfx.FONT_SYSTEM_SMALL)/2),Gfx.FONT_SYSTEM_SMALL,"#CIQSummit17",Gfx.TEXT_JUSTIFY_CENTER);          
+          // dc.drawText(dw/2,(dh/2)-(dc.getFontHeight(Gfx.FONT_SYSTEM_SMALL)/2),Gfx.FONT_SYSTEM_SMALL,"#CIQSummit17",Gfx.TEXT_JUSTIFY_CENTER);
         } else {
         dc.setColor(Gfx.COLOR_DK_RED, Gfx.COLOR_TRANSPARENT);
           dc.drawText(dw/2,(dh/2)-(dc.getFontHeight(Gfx.FONT_SYSTEM_SMALL)/2),Gfx.FONT_SYSTEM_SMALL,"Disconnected",Gfx.TEXT_JUSTIFY_CENTER);
@@ -309,7 +318,7 @@ class BasicView extends Ui.WatchFace {
       if (got_tweets == null && sent_request == null) {
         getTweets();
         sent_request = true;
-      } 
+      }
 
       // redraw the screen
       Ui.requestUpdate();
@@ -344,7 +353,7 @@ class BasicView extends Ui.WatchFace {
       };
 
       // this url proxies the tweets for #ciqsummit2017
-      // using the real twitter API will mean we will quickly run out of API requests 
+      // using the real twitter API will mean we will quickly run out of API requests
       var url = "";
       var random = Math.rand();
       url = "https://s3.us-east-2.amazonaws.com/ciqsummit2017/tweets?"+random.toString();
@@ -354,7 +363,7 @@ class BasicView extends Ui.WatchFace {
           url, params, options, method(:onReceiveTweetData)
         );
 
-      } else { 
+      } else {
         Comm.makeJsonRequest(
           url, params, options, method(:onReceiveTweetData)
         );
