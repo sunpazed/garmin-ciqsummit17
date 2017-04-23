@@ -277,7 +277,6 @@ class BasicView extends Ui.WatchFace {
         dc.setColor(Gfx.COLOR_DK_BLUE, Gfx.COLOR_TRANSPARENT);
         dc.drawBitmap((dw-gciqlogo.getWidth())/2, (dh-gciqlogo.getHeight())/2, gciqlogo);
 
-          // dc.drawText(dw/2,(dh/2)-(dc.getFontHeight(Gfx.FONT_SYSTEM_SMALL)/2),Gfx.FONT_SYSTEM_SMALL,"#CIQSummit17",Gfx.TEXT_JUSTIFY_CENTER);
         } else {
         dc.setColor(Gfx.COLOR_DK_RED, Gfx.COLOR_TRANSPARENT);
           dc.drawText(dw/2,(dh/2)-(dc.getFontHeight(Gfx.FONT_SYSTEM_SMALL)/2),Gfx.FONT_SYSTEM_SMALL,"Disconnected",Gfx.TEXT_JUSTIFY_CENTER);
